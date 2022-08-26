@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import Seo from '../components/Seo';
 
-const API_KEY = '5ff0b7fd09cfd4da13df1de9c77a9e14';
-
 interface IMovieProps {
   id: number;
   original_title: string;
@@ -14,9 +12,7 @@ export default function Home() {
 
   useEffect(() => {
     (async () => {
-      const { results } = await (
-        await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`)
-      ).json();
+      const { results } = await (await fetch(`/api/movies`)).json();
       setMovieDate(results);
       console.log(results);
     })();
