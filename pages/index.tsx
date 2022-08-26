@@ -1,4 +1,6 @@
 import { InferGetServerSidePropsType } from 'next';
+import { useRouter } from 'next/router';
+import { useCallback } from 'react';
 import Seo from '../components/Seo';
 
 interface IMovieProps {
@@ -19,11 +21,21 @@ interface IMovieProps {
 }
 
 export default function Home({ results }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const router = useRouter();
+  const moveToDetailPg = useCallback((id: number, title: string) => {
+    router.push({ pathname: `/movies/${id}`, query: { title } }, `/movies/${id}`);
+    // <LINK href={{pathname:`/movies/${id}`,query:{title:moveToDetailPg.original_title},},as={`/movies/${id}`}}>도 동일하게 사용 가능
+  }, []);
+
   return (
     <div className="container">
       <Seo title="Home" />
       {results?.map((movie: IMovieProps) => (
-        <div className="movie" key={movie.id}>
+        <div
+          className="movie"
+          key={movie.id}
+          onClick={() => moveToDetailPg(movie.id, movie.original_title)}
+        >
           <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
           <h4>{movie.original_title}</h4>
         </div>
@@ -35,11 +47,15 @@ export default function Home({ results }: InferGetServerSidePropsType<typeof get
           padding: 20px;
           gap: 20px;
         }
+        .movie {
+          pointer-events: none;
+        }
         .movie img {
           max-width: 100%;
           border-radius: 12px;
           transition: transform 0.2s ease-in-out;
           box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+          pointer-events: auto;
           cursor: pointer;
         }
         .movie:hover img {
@@ -48,6 +64,8 @@ export default function Home({ results }: InferGetServerSidePropsType<typeof get
         .movie h4 {
           font-size: 18px;
           text-align: center;
+          pointer-events: auto;
+          cursor: pointer;
         }
       `}</style>
     </div>
