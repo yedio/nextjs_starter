@@ -1,36 +1,33 @@
-import { useEffect, useState } from 'react';
+import { InferGetServerSidePropsType } from 'next';
 import Seo from '../components/Seo';
 
 interface IMovieProps {
   id: number;
   original_title: string;
   poster_path: string;
+  adult: boolean;
+  backdrop_path: string;
+  genre_ids: number[];
+  original_language: string;
+  overview: string;
+  popularity: number;
+  release_date: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
 }
 
-export default function Home() {
-  const [movieData, setMovieDate] = useState([]);
-
-  useEffect(() => {
-    (async () => {
-      const { results } = await (await fetch(`/api/movies`)).json();
-      setMovieDate(results);
-      console.log(results);
-    })();
-  }, []);
-
+export default function Home({ results }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <div className="container">
       <Seo title="Home" />
-      {!movieData ? (
-        <h4>Loading...</h4>
-      ) : (
-        movieData.map((movie: IMovieProps) => (
-          <div className="movie" key={movie.id}>
-            <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
-            <h4>{movie.original_title}</h4>
-          </div>
-        ))
-      )}
+      {results?.map((movie: IMovieProps) => (
+        <div className="movie" key={movie.id}>
+          <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
+          <h4>{movie.original_title}</h4>
+        </div>
+      ))}
       <style jsx>{`
         .container {
           display: grid;
@@ -55,4 +52,13 @@ export default function Home() {
       `}</style>
     </div>
   );
+}
+
+export async function getServerSideProps() {
+  const { results } = await (await fetch(`${process.env.BASE_URL}api/movies`)).json();
+  return {
+    props: {
+      results,
+    },
+  };
 }
