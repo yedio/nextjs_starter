@@ -23,8 +23,7 @@ interface IMovieProps {
 export default function Home({ results }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const moveToDetailPg = useCallback((id: number, title: string) => {
-    router.push({ pathname: `/movies/${id}`, query: { title } }, `/movies/${id}`);
-    // <LINK href={{pathname:`/movies/${id}`,query:{title:moveToDetailPg.original_title},},as={`/movies/${id}`}}>도 동일하게 사용 가능
+    router.push(`/movies/${title}/${id}`);
   }, []);
 
   return (
